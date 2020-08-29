@@ -1,5 +1,6 @@
 package me.black9p.security.service;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -16,14 +17,6 @@ public class RandomService {
         byte[] bytes = new byte[16];
         secureRandom.nextBytes(bytes);
 
-        System.out.println(toHex(bytes));
-    }
-
-    private String toHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte bt:bytes) {
-            sb.append(String.format("%02x", bt));
-        }
-        return sb.toString();
+        System.out.println(Hex.toHexString(bytes));
     }
 }
