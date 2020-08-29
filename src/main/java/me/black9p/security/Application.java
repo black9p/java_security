@@ -8,9 +8,10 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.security.*;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class Application {
     private final KeyService keyService;
     private final CipherService cipherService;
     private final AuthenticationService authenticationService;
+    private final SignatureService signatureService;
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Application.class);
@@ -37,21 +39,15 @@ public class Application {
             String algorithm = "RSA";
             KeyPair keyPair = keyService.createKeyPair(algorithm, 1024);
 
-            Key publicKey = keyPair.getPublic();
-            Key privateKey = keyPair.getPrivate();
+            PublicKey publicKey = keyPair.getPublic();
+            PrivateKey privateKey = keyPair.getPrivate();
 
-            System.out.println(publicKey.getFormat());    // 공개키 포맷 X.509
-            System.out.println(privateKey.getFormat());   // 개인키 포맷 PKCS#8
+            String plainText = "Security is very important";
 
-            byte[] publicKeyBytes = publicKey.getEncoded();
-            byte[] privateKeyBytes = privateKey.getEncoded();
+            byte[] signature = signatureService.sign(privateKey, plainText.getBytes(StandardCharsets.UTF_8));
+            boolean verified = signatureService.verify(publicKey, signature, plainText.getBytes(StandardCharsets.UTF_8));
 
-            KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-            PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
-            PrivateKey priKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
-
-            System.out.println(publicKey.equals(pubKey));
-            System.out.println(privateKey.equals(priKey));
+            System.out.println("verified: " + verified);
         };
     }
 }
