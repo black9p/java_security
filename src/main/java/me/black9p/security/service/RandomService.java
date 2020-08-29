@@ -1,9 +1,12 @@
-package me.black9p.security.random;
+package me.black9p.security.service;
 
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 
+/**
+ * 난수 생성 서비스
+ */
 @Component
 public class RandomService {
 

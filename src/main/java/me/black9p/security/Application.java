@@ -1,8 +1,8 @@
 package me.black9p.security;
 
 import lombok.RequiredArgsConstructor;
-import me.black9p.security.jca.ProviderService;
-import me.black9p.security.random.RandomService;
+import me.black9p.security.service.ProviderService;
+import me.black9p.security.service.RandomService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
