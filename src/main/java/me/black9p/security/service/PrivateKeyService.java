@@ -17,12 +17,13 @@ public class PrivateKeyService {
     /**
      * KeyGenerator 를 사용한 비밀키 생성
      * @param algorithm 사용할 알고리즘
-     * @throws NoSuchAlgorithmException
+     * @param keySize 키 사이즈
      * @return
+     * @throws NoSuchAlgorithmException
      */
-    public SecretKey createPrivateKeyByKeyGenerator(String algorithm) throws NoSuchAlgorithmException {
+    public SecretKey createPrivateKeyByKeyGenerator(String algorithm, int keySize) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
-        keyGenerator.init(128);
+        keyGenerator.init(keySize);
 
         return keyGenerator.generateKey();
     }
