@@ -31,15 +31,19 @@ public class Application {
     @Bean
     CommandLineRunner execute(){
         return args -> {
+            providerService.enrollProvider();
+
             String plainText = "Security is very important";
             System.out.println("Plain Text : " + plainText);
 
-            SecretKey privateKey = privateKeyService.createPrivateKeyByKeyGenerator("AES", 256);
+            String transformation = "AES/ECB/PKCS5Padding";
+            String algorithm = "AES";
+            SecretKey privateKey = privateKeyService.createPrivateKeyByKeyGenerator(algorithm, 256);
 
-            byte[] encrypted = cipherService.encrypt(privateKey, plainText.getBytes(StandardCharsets.UTF_8));
+            byte[] encrypted = cipherService.encrypt(transformation, privateKey, plainText.getBytes(StandardCharsets.UTF_8));
             System.out.println("Encrypted Text: " + Hex.toHexString(encrypted));
 
-            byte[] decrypted = cipherService.decrypt(privateKey, encrypted);
+            byte[] decrypted = cipherService.decrypt(transformation, privateKey, encrypted);
             System.out.println("Decrypted Text: " + new String(decrypted, StandardCharsets.UTF_8));
         };
     }

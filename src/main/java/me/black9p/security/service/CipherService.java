@@ -12,14 +12,14 @@ import java.security.GeneralSecurityException;
 @Component
 public class CipherService {
 
-    public byte[] encrypt(SecretKey secretKey, byte[] plainData) throws GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    public byte[] encrypt(String transformation, SecretKey secretKey, byte[] plainData) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         return cipher.doFinal(plainData);
     }
 
-    public byte[] decrypt(SecretKey secretKey, byte[] encryptData) throws GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    public byte[] decrypt(String transformation, SecretKey secretKey, byte[] encryptData) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         return cipher.update(encryptData);
     }
