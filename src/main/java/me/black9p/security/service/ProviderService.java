@@ -16,11 +16,11 @@ public class ProviderService {
         // Enroll Bouncy Castle Provider
         Security.addProvider(new BouncyCastleProvider());
 
-        Provider provider = Security.getProvider("BC");
-        if (provider != null) {
-            System.out.println("BC available");
-        } else {
-            System.out.println("BC not available");
-        }
+//        Provider provider = Security.getProvider("BC");
+//        if (provider != null) {
+//            System.out.println("BC available");
+//        } else {
+//            System.out.println("BC not available");
+//        }
     }
 }

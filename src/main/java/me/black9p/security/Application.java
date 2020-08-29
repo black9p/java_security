@@ -2,14 +2,15 @@ package me.black9p.security;
 
 import lombok.RequiredArgsConstructor;
 import me.black9p.security.service.*;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import javax.crypto.SecretKey;
+import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class Application {
     private final ProviderService providerService;
     private final RandomService randomService;
     private final HashService hashService;
-    private final PrivateKeyService privateKeyService;
+    private final KeyService keyService;
     private final CipherService cipherService;
     private final AuthenticationService authenticationService;
 
@@ -33,14 +34,24 @@ public class Application {
         return args -> {
             providerService.enrollProvider();
 
-            String plainText = "Security is very important";
-            System.out.println("Plain Text : " + plainText);
+            String algorithm = "RSA";
+            KeyPair keyPair = keyService.createKeyPair(algorithm, 1024);
 
-            String algorithm = "HmacSHA256";
-            SecretKey privateKey = privateKeyService.createPrivateKeyByKeyGenerator(algorithm, 256);
+            Key publicKey = keyPair.getPublic();
+            Key privateKey = keyPair.getPrivate();
 
-            byte[] mac = authenticationService.generateMAC(algorithm, privateKey, plainText);
-            System.out.println(Hex.toHexString(mac));
+            System.out.println(publicKey.getFormat());    // 공개키 포맷 X.509
+            System.out.println(privateKey.getFormat());   // 개인키 포맷 PKCS#8
+
+            byte[] publicKeyBytes = publicKey.getEncoded();
+            byte[] privateKeyBytes = privateKey.getEncoded();
+
+            KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+            PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
+            PrivateKey priKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
+
+            System.out.println(publicKey.equals(pubKey));
+            System.out.println(privateKey.equals(priKey));
         };
     }
 }
