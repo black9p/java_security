@@ -36,13 +36,15 @@ public class Application {
             String plainText = "Security is very important";
             System.out.println("Plain Text : " + plainText);
 
-            String transformation = "AES/ECB/PKCS5Padding";
+            // Try CBC Mode
+            String transformation = "AES/CBC/PKCS5Padding";
             String algorithm = "AES";
             SecretKey privateKey = privateKeyService.createPrivateKeyByKeyGenerator(algorithm, 256);
 
             byte[] encrypted = cipherService.encrypt(transformation, privateKey, plainText.getBytes(StandardCharsets.UTF_8));
             System.out.println("Encrypted Text: " + Hex.toHexString(encrypted));
 
+            // Exception occurs when decrypt
             byte[] decrypted = cipherService.decrypt(transformation, privateKey, encrypted);
             System.out.println("Decrypted Text: " + new String(decrypted, StandardCharsets.UTF_8));
         };
