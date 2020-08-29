@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.security.GeneralSecurityException;
 
 /**
@@ -12,15 +13,17 @@ import java.security.GeneralSecurityException;
 @Component
 public class CipherService {
 
-    public byte[] encrypt(String transformation, SecretKey secretKey, byte[] plainData) throws GeneralSecurityException {
+    public byte[] encrypt(String transformation, SecretKey secretKey, byte[] plainData, byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(transformation);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
         return cipher.doFinal(plainData);
     }
 
-    public byte[] decrypt(String transformation, SecretKey secretKey, byte[] encryptData) throws GeneralSecurityException {
+    public byte[] decrypt(String transformation, SecretKey secretKey, byte[] encryptData, byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(transformation);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
         return cipher.update(encryptData);
     }
 }
