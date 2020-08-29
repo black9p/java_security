@@ -10,8 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -22,6 +20,7 @@ public class Application {
     private final HashService hashService;
     private final PrivateKeyService privateKeyService;
     private final CipherService cipherService;
+    private final AuthenticationService authenticationService;
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Application.class);
@@ -37,21 +36,11 @@ public class Application {
             String plainText = "Security is very important";
             System.out.println("Plain Text : " + plainText);
 
-            // Generate IV
-            SecureRandom random = new SecureRandom();
-            byte[] iv = new byte[16];   // 128 bit
-            random.nextBytes(iv);
-
-            // Try CBC Mode
-            String transformation = "AES/CBC/PKCS5Padding";
-            String algorithm = "AES";
+            String algorithm = "HmacSHA256";
             SecretKey privateKey = privateKeyService.createPrivateKeyByKeyGenerator(algorithm, 256);
 
-            byte[] encrypted = cipherService.encrypt(transformation, privateKey, plainText.getBytes(StandardCharsets.UTF_8), iv);
-            System.out.println("Encrypted Text: " + Hex.toHexString(encrypted));
-
-            byte[] decrypted = cipherService.decrypt(transformation, privateKey, encrypted, iv);
-            System.out.println("Decrypted Text: " + new String(decrypted, StandardCharsets.UTF_8));
+            byte[] mac = authenticationService.generateMAC(algorithm, privateKey, plainText);
+            System.out.println(Hex.toHexString(mac));
         };
     }
 }
