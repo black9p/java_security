@@ -1,6 +1,7 @@
 package me.black9p.security;
 
 import lombok.RequiredArgsConstructor;
+import me.black9p.security.service.HashService;
 import me.black9p.security.service.ProviderService;
 import me.black9p.security.service.RandomService;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +16,7 @@ public class Application {
 
     private final ProviderService providerService;
     private final RandomService randomService;
+    private final HashService hashService;
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Application.class);
@@ -24,6 +26,11 @@ public class Application {
 
     @Bean
     CommandLineRunner execute(){
-        return args -> randomService.generateRandomNumber();
+        return args -> {
+            String plainText = "Security is very important";
+            String hashValue = hashService.generateHashValue(plainText);
+
+            System.out.println(hashValue);
+        };
     }
 }
